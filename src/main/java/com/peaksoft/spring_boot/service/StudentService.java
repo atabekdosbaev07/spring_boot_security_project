@@ -2,12 +2,15 @@ package com.peaksoft.spring_boot.service;
 
 import com.peaksoft.spring_boot.dto.StudentRequest;
 import com.peaksoft.spring_boot.dto.StudentResponse;
+import com.peaksoft.spring_boot.dto.StudentResponseView;
 import com.peaksoft.spring_boot.entity.Student;
 import com.peaksoft.spring_boot.repository.StudentRepository1;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,7 +76,33 @@ public class StudentService {
     }
 
     public List<Student> getAllStudents() {
+
         return studentRepository1.findAll();
+    }
+
+
+    public StudentResponseView getAllStudentsPagination(String text, int page, int size){
+        StudentResponseView responseView = new StudentResponseView();
+        PageRequest pageable =  PageRequest.of(page -1, size);
+        responseView.setResponses(view(search(text, pageable)));
+        return responseView;
+    }
+
+    public List<StudentResponse> view(List<Student> students){
+        List<StudentResponse> responses = new ArrayList<>();
+        for (Student student:students) {
+            responses.add(studentResponse(student));
+        }
+        return  responses;
+    }
+
+    private List<Student> search(String name, PageRequest pageable) {
+        if (name == null) {
+            return studentRepository1.getByPagination(pageable);
+        } else {
+            //String text = name == null ? " " : name;
+            return studentRepository1.searchAndPagination(name.toUpperCase(), pageable);
+        }
     }
 }
 

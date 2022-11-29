@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class Student {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="student_gen" )
     @SequenceGenerator(name = "student_gen",
             sequenceName = "student_seq",
             allocationSize = 1)
